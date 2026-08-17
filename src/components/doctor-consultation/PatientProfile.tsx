@@ -10,7 +10,6 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import type { PatientProfile as PatientProfileData } from '../../types/doctorConsultation'
 import { cn } from '../../lib/cn'
-import { VALUE } from '../../lib/typography'
 
 const VITAL_ICONS: Record<string, LucideIcon> = {
   blood: Droplet,
