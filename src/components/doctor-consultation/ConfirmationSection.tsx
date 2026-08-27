@@ -1,6 +1,6 @@
 import {
-  ArrowRight,
   CalendarCheck,
+  Check,
   FileText,
   Lock,
   Stethoscope,
@@ -30,11 +30,7 @@ const STATUS_ITEMS: Array<{
   },
 ]
 
-export function ConfirmationSection({
-  onConfirm,
-}: {
-  onConfirm: () => void
-}) {
+export function ConfirmationSection() {
   return (
     <section
       className="
@@ -43,17 +39,17 @@ export function ConfirmationSection({
         overflow-hidden
         rounded-[24px]
         bg-[linear-gradient(95deg,#6366F1_0%,#A855F7_50%,#3B82F6_100%)]
-        p-5
+        p-6
         shadow-[0_24px_55px_-20px_rgba(0,0,0,0.25)]
         sm:rounded-[30px]
-        sm:p-6
+        sm:p-7
         lg:rounded-[36px]
-        lg:p-7
-        xl:p-8
+        lg:p-8
+        xl:p-9
       "
     >
       {/* Heading */}
-      <div className="flex min-w-0 items-start gap-4">
+      <div className="flex min-w-0 items-start gap-4 sm:gap-5">
         <span
           className="
             flex
@@ -64,11 +60,11 @@ export function ConfirmationSection({
             rounded-[16px]
             bg-white/20
             backdrop-blur-md
-            sm:size-[56px]
+            sm:size-[58px]
           "
         >
           <CalendarCheck
-            className="size-6 text-white"
+            className="size-6 sm:size-7 text-white"
             strokeWidth={2}
           />
         </span>
@@ -77,11 +73,11 @@ export function ConfirmationSection({
           <h2
             className={`${TYPE.ctaHeading} text-white`}
           >
-            You're Just One Step Away!
+            You&apos;re Ready for Your Consultation!
           </h2>
 
           <p
-            className={`${TYPE.ctaBody} text-white/75`}
+            className={`${TYPE.ctaBody} text-white/80`}
           >
             Review your appointment details and confirm your
             booking securely.
@@ -97,24 +93,25 @@ export function ConfirmationSection({
           min-w-0
           flex-col
           gap-6
-          lg:mt-7
+          sm:mt-7
+          lg:mt-8
           lg:flex-row
           lg:items-center
           lg:justify-between
           lg:gap-6
         "
       >
-        {/* Status */}
+        {/* Status 3 Circular Cards matching Figma */}
         <ul
           className="
             grid
             min-w-0
             grid-cols-3
             gap-3
-            sm:gap-5
+            sm:gap-6
             lg:flex
-            lg:gap-6
-            xl:gap-8
+            lg:gap-7
+            xl:gap-9
           "
         >
           {STATUS_ITEMS.map((item) => (
@@ -139,11 +136,11 @@ export function ConfirmationSection({
                   border
                   border-white/40
                   bg-white/20
-                  sm:size-[48px]
+                  sm:size-[50px]
                 "
               >
                 <item.icon
-                  className="size-[19px] text-white"
+                  className="size-[19px] sm:size-[21px] text-white"
                   strokeWidth={2}
                 />
               </span>
@@ -152,12 +149,12 @@ export function ConfirmationSection({
                 className="
                   text-center
                   font-inter
-                  text-[10px]
-                  leading-[14px]
+                  text-[11px]
+                  leading-[15px]
                   font-bold
                   whitespace-pre-line
-                  text-white/85
-                  sm:text-[11px]
+                  text-white/90
+                  sm:text-[12px]
                   sm:leading-[16px]
                 "
               >
@@ -167,48 +164,25 @@ export function ConfirmationSection({
           ))}
         </ul>
 
-        {/* CTA */}
+        {/* Right Info Pill matching Figma visual composition */}
         <div
           className="
             flex
             w-full
             min-w-0
             flex-col
-            items-stretch
-            gap-2.5
-            lg:w-[230px]
+            items-center
+            gap-2
+            lg:w-[220px]
             lg:shrink-0
           "
         >
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="
-              flex
-              min-h-[50px]
-              w-full
-              items-center
-              justify-center
-              gap-2.5
-              rounded-full
-              bg-white
-              px-5
-              text-brand-600
-              shadow-[0_8px_20px_-8px_rgba(0,0,0,0.25)]
-              transition-transform
-              hover:scale-[1.01]
-              lg:min-h-[56px]
-            "
-          >
-            <span className="font-inter text-[15px] font-bold">
-              Confirm Booking
+          <div className="flex h-[46px] w-full items-center justify-center gap-2 rounded-full bg-white/25 border border-white/40 px-4 text-white shadow-sm backdrop-blur-md sm:h-[48px]">
+            <Check className="size-4 text-emerald-300" strokeWidth={3} />
+            <span className="font-inter text-[13px] font-bold text-white whitespace-nowrap">
+              Ready for Consultation
             </span>
-
-            <ArrowRight
-              className="size-[17px]"
-              strokeWidth={2.4}
-            />
-          </button>
+          </div>
 
           <p
             className="
@@ -217,11 +191,11 @@ export function ConfirmationSection({
               justify-center
               gap-1.5
               font-inter
-              text-[9px]
+              text-[10px]
               leading-[14px]
               font-medium
-              text-white/65
-              lg:text-[10px]
+              text-white/70
+              sm:text-[11px]
             "
           >
             <Lock

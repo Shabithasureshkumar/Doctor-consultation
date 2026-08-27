@@ -107,10 +107,10 @@ export function DoctorProfile({
               px-2.5
               py-1
               font-inter
-              text-[8px]
-              leading-[11px]
+              text-[11px]
+              leading-[14px]
               font-bold
-              tracking-[0.07em]
+              tracking-[0.05em]
               text-[#00668A]
               uppercase
             "
@@ -133,7 +133,7 @@ export function DoctorProfile({
           <span
             className="
               font-inter
-              text-[11px]
+              text-[12px]
               leading-[16px]
               font-medium
               text-ink-500
@@ -152,7 +152,7 @@ export function DoctorProfile({
           <span
             className="
               font-inter
-              text-[11px]
+              text-[12px]
               leading-[16px]
               text-ink-500
             "
@@ -183,7 +183,7 @@ export function DoctorProfile({
             <span
               className="
                 font-inter
-                text-[11px]
+                text-[12px]
                 font-bold
                 text-ink-700
               "
@@ -204,8 +204,8 @@ export function DoctorProfile({
                 px-2
                 py-1
                 font-inter
-                text-[9px]
-                leading-[12px]
+                text-[11px]
+                leading-[14px]
                 font-medium
                 ${TAG_STYLES[index % TAG_STYLES.length]}
               `}

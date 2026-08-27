@@ -33,11 +33,11 @@ export function TrustBenefits() {
               />
             </span>
 
-            <h3 className={`${TYPE.badge} text-ink-850`}>
+            <h3 className={`${TYPE.badge} font-bold text-ink-850`}>
               {benefit.title}
             </h3>
 
-            <p className="mt-1 font-inter text-[10px] leading-[14px] text-ink-300 sm:text-[11px] sm:leading-[15px]">
+            <p className="mt-1 font-inter text-[11px] leading-[15px] text-ink-400">
               {benefit.subtitle}
             </p>
           </article>

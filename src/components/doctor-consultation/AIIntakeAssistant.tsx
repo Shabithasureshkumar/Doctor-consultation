@@ -1,11 +1,14 @@
 import { useState } from 'react'
-import { Bot, Mic, Sparkles, X } from 'lucide-react'
+import { Bot, Check, ChevronRight, Mic, MicOff, Search, Sparkles, X } from 'lucide-react'
+import type { SymptomItem } from '../../types/doctorConsultation'
+import { SYMPTOM_SUGGESTIONS } from '../../data/doctorConsultationData'
 
 interface AIIntakeAssistantProps {
-  symptoms: string[]
+  symptoms: SymptomItem[]
   reason: string
-  onRemoveSymptom: (symptom: string) => void
-  onAddSymptom: (symptom: string) => void
+  onRemoveSymptom: (id: string) => void
+  onAddSymptom: (symptom: SymptomItem) => void
+  onSelectSymptom: (symptom: SymptomItem) => void
   onReasonChange: (value: string) => void
   onViewSummary: () => void
 }
@@ -15,47 +18,71 @@ export function AIIntakeAssistant({
   reason,
   onRemoveSymptom,
   onAddSymptom,
+  onSelectSymptom,
   onReasonChange,
   onViewSummary,
 }: AIIntakeAssistantProps) {
   const [adding, setAdding] = useState(false)
-  const [draft, setDraft] = useState('')
+  const [query, setQuery] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
 
-  const commitDraft = () => {
-    const value = draft.trim()
+  const filteredSuggestions = SYMPTOM_SUGGESTIONS.filter(
+    (s) =>
+      s.toLowerCase().includes(query.toLowerCase()) &&
+      !symptoms.some((item) => item.name.toLowerCase() === s.toLowerCase()),
+  )
 
-    if (value) {
-      onAddSymptom(value)
+  const handleAdd = (name: string) => {
+    if (!name.trim()) return
+
+    const newSymptom: SymptomItem = {
+      id: `symptom-${Date.now()}`,
+      name: name.trim(),
+      severity: 'Moderate',
+      duration: '3 days',
+      onset: 'Gradual',
     }
 
-    setDraft('')
+    onAddSymptom(newSymptom)
+    setQuery('')
     setAdding(false)
+  }
+
+  const toggleVoiceRecording = () => {
+    if (isRecording) {
+      setIsRecording(false)
+    } else {
+      setIsRecording(true)
+      setTimeout(() => {
+        const dictationText =
+          reason.trim()
+            ? `${reason} Experiencing throbbing headaches and light sensitivity.`
+            : 'Experiencing recurring throbbing headaches for the past 4 days, especially in the afternoon.'
+        onReasonChange(dictationText.slice(0, 500))
+        setIsRecording(false)
+      }, 2500)
+    }
   }
 
   return (
     <section
       className="
+        card-surface
         flex
         w-full
         min-w-0
         flex-col
-        gap-4
+        gap-3.5
         rounded-[20px]
-        border
-        border-[#F1F5F9]
-        bg-white
         p-4
         shadow-[0_1px_2px_rgba(0,0,0,0.05)]
-
-        sm:gap-5
+        sm:gap-4
         sm:rounded-[24px]
         sm:p-5
-
         lg:rounded-[28px]
         lg:p-6
-
         xl:rounded-[30px]
-        xl:p-7
+        xl:p-6
       "
     >
       {/* Header */}
@@ -76,11 +103,9 @@ export function AIIntakeAssistant({
             justify-center
             rounded-[13px]
             bg-brand-50
-
             sm:size-11
             sm:rounded-[14px]
-
-            lg:size-[46px]
+            lg:size-[44px]
           "
         >
           <Bot
@@ -98,9 +123,6 @@ export function AIIntakeAssistant({
             font-bold
             tracking-[-0.01em]
             text-ink-850
-
-            sm:text-[18px]
-            sm:leading-[23px]
           "
         >
           AI Intake Assistant
@@ -108,16 +130,16 @@ export function AIIntakeAssistant({
       </div>
 
       {/* Detected Symptoms */}
-      <div className="flex min-w-0 flex-col gap-2.5">
+      <div className="flex min-w-0 flex-col gap-2">
         <h3
           className="
             font-inter
-            text-[10px]
+            text-[11px]
             leading-[14px]
             font-bold
             tracking-[0.05em]
             uppercase
-            text-ink-300
+            text-ink-400
           "
         >
           Detected Symptoms
@@ -134,8 +156,10 @@ export function AIIntakeAssistant({
         >
           {symptoms.map((symptom) => (
             <span
-              key={symptom}
+              key={symptom.id}
+              onClick={() => onSelectSymptom(symptom)}
               className="
+                group
                 flex
                 min-h-[36px]
                 max-w-full
@@ -145,7 +169,9 @@ export function AIIntakeAssistant({
                 rounded-[13px]
                 bg-brand-50
                 px-3
-
+                cursor-pointer
+                transition-all
+                hover:bg-brand-100
                 sm:min-h-[38px]
                 sm:rounded-[14px]
                 sm:px-3.5
@@ -160,18 +186,20 @@ export function AIIntakeAssistant({
                   leading-[17px]
                   font-semibold
                   text-brand-600
-
                   sm:text-[13px]
                   sm:leading-[18px]
                 "
               >
-                {symptom}
+                {symptom.name}
               </span>
 
               <button
                 type="button"
-                onClick={() => onRemoveSymptom(symptom)}
-                aria-label={`Remove ${symptom}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onRemoveSymptom(symptom.id)
+                }}
+                aria-label={`Remove ${symptom.name}`}
                 className="
                   flex
                   size-6
@@ -181,7 +209,7 @@ export function AIIntakeAssistant({
                   rounded-full
                   text-brand-600
                   transition-colors
-                  hover:bg-brand-100
+                  hover:bg-brand-200
                 "
               >
                 <X
@@ -192,42 +220,61 @@ export function AIIntakeAssistant({
             </span>
           ))}
 
+          {/* Add Symptom Trigger / Autocomplete */}
           {adding ? (
-            <input
-              autoFocus
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              onBlur={commitDraft}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  commitDraft()
-                }
+            <div className="relative z-20">
+              <div className="flex items-center rounded-[13px] border border-brand-400 bg-white px-3 py-1 sm:rounded-[14px]">
+                <Search className="size-3.5 text-slate-400 mr-1.5" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAdd(query)
+                    }
+                    if (e.key === 'Escape') {
+                      setAdding(false)
+                      setQuery('')
+                    }
+                  }}
+                  placeholder="Symptom name..."
+                  className="w-[120px] font-inter text-[12px] font-semibold text-ink-800 outline-none sm:text-[13px]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setAdding(false)}
+                  className="text-slate-400 hover:text-slate-600 ml-1"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </div>
 
-                if (event.key === 'Escape') {
-                  setDraft('')
-                  setAdding(false)
-                }
-              }}
-              placeholder="Symptom"
-              aria-label="New symptom"
-              className="
-                min-h-[38px]
-                w-[140px]
-                min-w-0
-                rounded-[13px]
-                border
-                border-[#CBD5E1]
-                px-3
-                font-inter
-                text-[12px]
-                font-semibold
-                text-ink-700
-                outline-none
-
-                sm:rounded-[14px]
-                sm:text-[13px]
-              "
-            />
+              {/* Dropdown Suggestions */}
+              <div className="absolute top-[calc(100%+4px)] left-0 z-30 max-h-[170px] w-[190px] overflow-y-auto rounded-[14px] border border-slate-200 bg-white p-1.5 shadow-lg">
+                {filteredSuggestions.length > 0 ? (
+                  filteredSuggestions.map((sug) => (
+                    <button
+                      key={sug}
+                      type="button"
+                      onClick={() => handleAdd(sug)}
+                      className="flex w-full items-center justify-between rounded-[8px] px-2.5 py-1.5 text-left font-inter text-[12px] font-medium text-ink-800 hover:bg-brand-50 hover:text-brand-700"
+                    >
+                      <span>{sug}</span>
+                      <ChevronRight className="size-3 text-slate-400" />
+                    </button>
+                  ))
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleAdd(query)}
+                    className="flex w-full items-center justify-between rounded-[8px] px-2.5 py-1.5 text-left font-inter text-[12px] font-bold text-brand-700 hover:bg-brand-50"
+                  >
+                    <span>+ Add &quot;{query}&quot;</span>
+                  </button>
+                )}
+              </div>
+            </div>
           ) : (
             <button
               type="button"
@@ -246,11 +293,10 @@ export function AIIntakeAssistant({
                 text-[12px]
                 leading-[17px]
                 font-semibold
-                text-ink-300
+                text-ink-400
                 transition-colors
                 hover:border-brand-600
                 hover:text-brand-600
-
                 sm:rounded-[14px]
                 sm:px-3.5
                 sm:text-[13px]
@@ -262,21 +308,19 @@ export function AIIntakeAssistant({
         </div>
       </div>
 
-      {/* AI Summary */}
+      {/* AI Summary Card from Figma */}
       <div
         className="
           flex
           min-w-0
           flex-col
-          gap-3
+          gap-2.5
           rounded-[15px]
           border
           border-[rgba(48,47,191,0.20)]
           bg-[rgba(79,70,229,0.10)]
           p-3.5
-
           sm:rounded-[16px]
-          sm:p-4
         "
       >
         <div className="flex min-w-0 items-start gap-2">
@@ -285,7 +329,7 @@ export function AIIntakeAssistant({
             strokeWidth={2.2}
           />
 
-          <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex min-w-0 flex-col gap-0.5">
             <h4
               className="
                 font-inter
@@ -293,9 +337,8 @@ export function AIIntakeAssistant({
                 leading-[18px]
                 font-bold
                 text-[#302FBF]
-
                 sm:text-[14px]
-                sm:leading-[20px]
+                sm:leading-[19px]
               "
             >
               Pre-visit summary ready
@@ -304,17 +347,15 @@ export function AIIntakeAssistant({
             <p
               className="
                 font-inter
-                text-[12px]
-                leading-[18px]
+                text-[11.5px]
+                leading-[16px]
                 font-normal
                 text-[#424752]
-
-                sm:text-[13px]
-                sm:leading-[19px]
+                sm:text-[12px]
+                sm:leading-[17px]
               "
             >
-              AI has synthesized your last 3 blood results for the doctor to
-              review.
+              AI has synthesized your last 3 blood results for the doctor to review.
             </p>
           </div>
         </div>
@@ -324,7 +365,7 @@ export function AIIntakeAssistant({
           onClick={onViewSummary}
           className="
             flex
-            min-h-[34px]
+            min-h-[32px]
             shrink-0
             items-center
             gap-1
@@ -339,8 +380,7 @@ export function AIIntakeAssistant({
             text-white
             transition-opacity
             hover:opacity-90
-
-            sm:min-h-[36px]
+            sm:min-h-[34px]
             sm:rounded-[10px]
             sm:px-3.5
             sm:text-[12px]
@@ -351,80 +391,94 @@ export function AIIntakeAssistant({
         </button>
       </div>
 
-      {/* Reason */}
-      <div className="flex min-w-0 flex-col gap-2.5">
-        <label
-          htmlFor="reason"
-          className="
-            font-inter
-            text-[10px]
-            leading-[14px]
-            font-bold
-            tracking-[0.05em]
-            uppercase
-            text-ink-300
-          "
-        >
-          Reason for Appointment
-        </label>
+      {/* Reason for Appointment */}
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <label
+            htmlFor="reason"
+            className="
+              font-inter
+              text-[11px]
+              leading-[14px]
+              font-bold
+              tracking-[0.05em]
+              uppercase
+              text-ink-400
+            "
+          >
+            Reason for Appointment
+          </label>
+
+          {reason.length > 0 && (
+            <span className="flex items-center gap-1 font-inter text-[11px] text-emerald-600 font-medium">
+              <Check className="size-3" /> Draft saved just now ✓
+            </span>
+          )}
+        </div>
 
         <div className="relative w-full min-w-0">
           <textarea
             id="reason"
+            maxLength={500}
             value={reason}
             onChange={(event) => onReasonChange(event.target.value)}
             placeholder="Briefly describe your condition..."
             className="
               textarea-reset
-              min-h-[110px]
+              min-h-[96px]
               w-full
               rounded-[16px]
               bg-[#F8FAFC]
-              p-3.5
+              p-3
               pr-14
               font-inter
               text-[13px]
-              leading-[20px]
+              leading-[19px]
               text-ink-700
               placeholder:text-[#6B7280]
-
-              sm:min-h-[120px]
+              sm:min-h-[105px]
               sm:rounded-[18px]
-              sm:p-4
+              sm:p-3.5
               sm:pr-16
-              sm:text-[14px]
-              sm:leading-[21px]
-
-              lg:min-h-[130px]
             "
           />
 
           <button
             type="button"
-            aria-label="Dictate your condition"
-            className="
+            onClick={toggleVoiceRecording}
+            aria-label={isRecording ? 'Stop recording' : 'Dictate your condition'}
+            title={isRecording ? 'Recording... click to stop' : 'Click to dictate'}
+            className={`
               absolute
-              right-3
-              bottom-3
+              right-2.5
+              bottom-2.5
               flex
-              size-9
+              size-8
               items-center
               justify-center
               rounded-full
-              bg-white
-              text-indigo-accent
               shadow-[0_2px_8px_rgba(15,23,42,0.12)]
-              transition-colors
-              hover:bg-brand-50
-
-              sm:size-10
-            "
+              transition-all
+              ${
+                isRecording
+                  ? 'bg-rose-600 text-white animate-pulse'
+                  : 'bg-white text-indigo-accent hover:bg-brand-50'
+              }
+              sm:size-9
+            `}
           >
-            <Mic
-              className="size-[16px] sm:size-[17px]"
-              strokeWidth={2.2}
-            />
+            {isRecording ? (
+              <MicOff className="size-[15px] sm:size-[16px]" strokeWidth={2.2} />
+            ) : (
+              <Mic className="size-[15px] sm:size-[16px]" strokeWidth={2.2} />
+            )}
           </button>
+        </div>
+
+        {/* Character count & validation note */}
+        <div className="flex items-center justify-between font-inter text-[10.5px] text-ink-400 px-1">
+          <span>{isRecording ? '🎙️ Listening to your voice...' : 'Describe symptoms or current discomfort'}</span>
+          <span>{reason.length} / 500</span>
         </div>
       </div>
 
@@ -437,12 +491,10 @@ export function AIIntakeAssistant({
           gap-2
           font-inter
           text-[11px]
-          leading-[17px]
+          leading-[16px]
           font-semibold
           text-indigo-accent
-
-          sm:text-[12px]
-          sm:leading-[18px]
+          sm:text-[11.5px]
         "
       >
         <Sparkles

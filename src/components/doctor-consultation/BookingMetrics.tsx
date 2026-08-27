@@ -59,12 +59,12 @@ export function BookingMetrics({
                 min-w-0
                 items-center
                 justify-center
-                gap-1
+                gap-1.5
               "
             >
               <Icon
                 className="
-                  size-[12px]
+                  size-[13px]
                   shrink-0
                   text-ink-400
                 "
@@ -75,8 +75,8 @@ export function BookingMetrics({
                 className="
                   truncate
                   font-inter
-                  text-[8px]
-                  leading-[11px]
+                  text-[11px]
+                  leading-[14px]
                   font-semibold
                   tracking-[0.02em]
                   text-ink-400

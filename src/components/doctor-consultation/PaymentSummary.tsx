@@ -22,15 +22,12 @@ export function PaymentSummary({
         gap-5
         rounded-[20px]
         p-4
-
         sm:gap-5
         sm:rounded-[24px]
         sm:p-5
-
         lg:gap-6
         lg:rounded-[28px]
         lg:p-6
-
         xl:rounded-[30px]
         xl:p-7
       "
@@ -67,14 +64,11 @@ export function PaymentSummary({
           <span
             className="
               font-inter
-              text-[9px]
-              leading-[13px]
+              text-[11px]
+              leading-[14px]
               font-bold
               tracking-[0.08em]
               uppercase
-
-              sm:text-[10px]
-              sm:leading-[14px]
             "
           >
             Secure
@@ -89,9 +83,7 @@ export function PaymentSummary({
           min-w-0
           flex-col
           gap-2.5
-
           sm:gap-3
-
           lg:gap-3.5
         "
       >
@@ -114,7 +106,6 @@ export function PaymentSummary({
                 leading-[19px]
                 font-normal
                 text-ink-600
-
                 sm:text-[14px]
                 sm:leading-[20px]
               "
@@ -131,7 +122,6 @@ export function PaymentSummary({
                 leading-[19px]
                 font-semibold
                 text-ink-900
-
                 sm:text-[14px]
                 sm:leading-[20px]
               "
@@ -153,7 +143,6 @@ export function PaymentSummary({
             border-t
             border-[#C7C4D7]
             pt-3
-
             sm:pt-4
           "
         >
@@ -165,7 +154,6 @@ export function PaymentSummary({
               leading-[21px]
               font-bold
               text-ink-900
-
               sm:text-[16px]
               sm:leading-[22px]
             "
@@ -182,7 +170,6 @@ export function PaymentSummary({
               leading-[22px]
               font-bold
               text-[#4648D4]
-
               sm:text-[17px]
               sm:leading-[23px]
             "
@@ -192,46 +179,44 @@ export function PaymentSummary({
         </div>
       </dl>
 
-      {/* Card */}
+      {/* Credit Card Graphic refined & centered matching Figma */}
       <div
         className="
           mx-auto
           w-full
-          max-w-[430px]
+          max-w-[380px]
           min-w-0
           rounded-[18px]
           bg-brand-200
-          p-4
-
+          p-3.5
           sm:rounded-[20px]
-          sm:p-5
-
-          lg:rounded-[24px]
-          lg:p-5
+          sm:p-4
         "
       >
         <div
           className="
+            mx-auto
             flex
-            aspect-[16/10]
+            aspect-[16/9.5]
             w-full
+            max-w-[320px]
             min-w-0
-            -rotate-[6deg]
+            rotate-0
+            sm:-rotate-[3.5deg]
             flex-col
             justify-between
             rounded-[14px]
             bg-[linear-gradient(109deg,#4648D4_0%,#8127CF_100%)]
             p-4
-            shadow-[0_16px_36px_-12px_rgba(70,72,212,0.55)]
-
+            shadow-[0_12px_28px_-10px_rgba(70,72,212,0.5)]
             sm:rounded-[16px]
-            sm:p-5
+            sm:p-4.5
           "
         >
           {/* Card Top */}
           <div className="flex min-w-0 items-start justify-between gap-3">
             <CreditCard
-              className="size-[22px] shrink-0 text-white/90 sm:size-[25px]"
+              className="size-[20px] shrink-0 text-white/90 sm:size-[22px]"
               strokeWidth={1.8}
             />
 
@@ -239,12 +224,11 @@ export function PaymentSummary({
               className="
                 shrink-0
                 font-inter
-                text-[14px]
+                text-[13px]
                 font-bold
                 italic
                 text-white
-
-                sm:text-[16px]
+                sm:text-[15px]
               "
             >
               VISA
@@ -252,17 +236,16 @@ export function PaymentSummary({
           </div>
 
           {/* Card Bottom */}
-          <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex min-w-0 flex-col gap-0.5">
             <span
               className="
                 truncate
                 font-inter
-                text-[13px]
+                text-[12px]
                 tracking-[0.1em]
                 text-white
-
-                sm:text-[15px]
-                lg:text-[17px]
+                sm:text-[14px]
+                lg:text-[15px]
               "
             >
               {cardNumber}
@@ -275,10 +258,8 @@ export function PaymentSummary({
                 text-[10px]
                 leading-[14px]
                 font-semibold
-                text-white/60
-
+                text-white/70
                 sm:text-[11px]
-                sm:leading-[15px]
               "
             >
               {cardHolder}
